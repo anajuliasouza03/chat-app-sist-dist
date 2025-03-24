@@ -1,6 +1,6 @@
 'use client'
 
-import { chats as fakeChats } from '@/services/fakeChats';
+import { chats as fakeChatsContacts } from '@/services/fakeChatsContacts';
 import { createContext, ReactNode, useReducer } from 'react';
 
 export type Message = {
@@ -29,9 +29,10 @@ type ChatAction =
     | {type: 'SET_ACTIVE_CHAT'; payload: string}
     | {type: 'SEND_MESSAGE'; payload: {chatId: string; message: Message}};
 
-const initialState: ChatState = {
-    chats: fakeChats,
-    activeChatId: fakeChats[0]?.id || null,
+
+const initialStateContacts: ChatState = {
+    chats: fakeChatsContacts,
+    activeChatId: fakeChatsContacts[0]?.id || null,
 };
 
 function chatReducer (state: ChatState, action: ChatAction): ChatState {
@@ -54,20 +55,21 @@ function chatReducer (state: ChatState, action: ChatAction): ChatState {
     }
 }
 
-export const ChatContext = createContext<{
+
+export const ChatContactsContext = createContext<{
     state: ChatState;
     dispatch: React.Dispatch<ChatAction>;
-}>({state: initialState, dispatch: () => null});
+}>({state: initialStateContacts, dispatch: () => null});
 
 
 export const ChatProvider = ({children}: {children: ReactNode}) => {
-    const [state, dispatch] = useReducer(chatReducer, initialState);
+    const [state, dispatch] = useReducer(chatReducer, initialStateContacts);
 
     return (
 
-            <ChatContext.Provider value={{state, dispatch}} >
+            <ChatContactsContext.Provider value={{state, dispatch}} >
                 {children}
-            </ChatContext.Provider>  
+            </ChatContactsContext.Provider>   
 
     )
 }
