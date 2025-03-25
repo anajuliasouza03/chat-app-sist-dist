@@ -4,6 +4,9 @@ import "./globals.css";
 import React from "react";
 import { AuthProvider } from "@/context/AuthContext";
 import { ViewProvider } from "@/context/ViewContext";
+import { ChatProvider } from "@/context/ChatContext"; 
+import { ChatContactsProvider } from "@/context/ChatContactsContext";
+import { ActiveChatTypeProvider } from "@/context/ActiveChatTypeContext";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -32,7 +35,13 @@ export default function RootLayout({
       >
         <AuthProvider>
           <ViewProvider>
-            {children}
+            <ChatProvider>
+              <ChatContactsProvider >
+                <ActiveChatTypeProvider>
+                  {children}
+                </ActiveChatTypeProvider>
+              </ChatContactsProvider>
+            </ChatProvider>
           </ViewProvider>
         </AuthProvider>
       </body>

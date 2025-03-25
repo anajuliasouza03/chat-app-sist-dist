@@ -5,6 +5,7 @@ import Sidebar from "./Sidebar";
 import ChatTabs from "./ChatTabs";
 import { useView } from "@/context/ViewContext";
 import ContactList from "./ContactList";
+import ChatWindow from "./ChatWindow";
 
 
 export default function ChatPage() {
@@ -17,7 +18,9 @@ export default function ChatPage() {
       <div className="">
         {view === 'chats' ? <ChatTabs /> : <ContactList />}
       </div>
-    {/*<ChatWindow />*/}
+    <div className="border-l border-gray-200">
+      <ChatWindow />
+    </div>
 
     </div>
   );

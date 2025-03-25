@@ -1,6 +1,6 @@
 "use client";
 
-import { useContext } from 'react';
+import { useContext, useEffect } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import LoginForm from '../components/Login/LoginForm';
 import ChatPage from '../components/Chat/ChatPage';
@@ -11,9 +11,11 @@ const AuthPage = () => {
   const { state } = useContext(AuthContext);
   const router = useRouter();
 
-  if(state.user){
-    router.push("/chatPage")
-  }
+  useEffect(() => {
+    if (state.user) {
+      router.push("/chatPage");
+    }
+  }, [state.user]);
 
   return (
     <div className="min-h-screen w-full bg-purple-700">

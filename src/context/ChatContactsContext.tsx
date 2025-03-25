@@ -62,14 +62,12 @@ export const ChatContactsContext = createContext<{
 }>({state: initialStateContacts, dispatch: () => null});
 
 
-export const ChatProvider = ({children}: {children: ReactNode}) => {
+export const ChatContactsProvider = ({children}: {children: ReactNode}) => {
     const [state, dispatch] = useReducer(chatReducer, initialStateContacts);
 
     return (
-
-            <ChatContactsContext.Provider value={{state, dispatch}} >
-                {children}
-            </ChatContactsContext.Provider>   
-
-    )
-}
+        <ChatContactsContext.Provider value={{state, dispatch}}>
+            {children}
+        </ChatContactsContext.Provider>
+    );
+};

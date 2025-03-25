@@ -3,7 +3,7 @@ import { Chat } from '@/context/ChatContext';
 export const chats: Chat[] = [
   {
     id: '1',
-    name: 'Ana Júlia',
+    name: 'Ciclano',
     avatar: '/assets/icon3.png',
     participants: ['Ana Júlia', 'Ciclano'],
     messages: [
@@ -12,7 +12,7 @@ export const chats: Chat[] = [
   },
   {
     id: '2',
-    name: 'Ana Júlia',
+    name: 'Ciclano',
     avatar: '/assets/icon3.png',
     participants: ['Ana Júlia', 'Ciclano'],
     messages: [
@@ -21,7 +21,7 @@ export const chats: Chat[] = [
   },
   {
     id: '3',
-    name: 'Ana Júlia',
+    name: 'Ciclano',
     avatar: '/assets/icon3.png',
     participants: ['Ana Júlia', 'Ciclano'],
     messages: [
@@ -30,7 +30,7 @@ export const chats: Chat[] = [
   },
   {
     id: '4',
-    name: 'Ana Júlia',
+    name: 'Ciclano',
     avatar: '/assets/icon3.png',
     participants: ['Ana Júlia', 'Ciclano'],
     messages: [
@@ -39,7 +39,7 @@ export const chats: Chat[] = [
   },
   {
     id: '5',
-    name: 'Ana Júlia',
+    name: 'Ciclano',
     avatar: '/assets/icon3.png',
     participants: ['Ana Júlia', 'Ciclano'],
     messages: [

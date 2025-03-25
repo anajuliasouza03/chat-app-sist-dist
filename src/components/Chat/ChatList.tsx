@@ -4,6 +4,7 @@ import { ChatContext  } from "@/context/ChatContext";
 import { ChatContactsContext  } from "@/context/ChatContactsContext";
 import { useContext, useState } from "react";
 import Image from 'next/image';
+import { useActiveChatType } from "@/context/ActiveChatTypeContext";
 
 export default function ChatList() {
 
@@ -13,13 +14,17 @@ export default function ChatList() {
     const {state:stateChatsContacts, dispatch:dispatchChatsContext} = useContext(ChatContactsContext);
     const {chats:chatsChatsContacts, activeChatId:activeChatIDChatsContacts} = stateChatsContacts;
 
+    const { setType } = useActiveChatType();
+
     const handleSelectedChat = (chatId: string) => {
         dispatch({type: 'SET_ACTIVE_CHAT', payload: chatId});
+        setType('group');
         console.log('selecionou grupo', chatId);
     };
 
     const handleSelectedChatContext = (chatId: string) => {
         dispatchChatsContext({type: 'SET_ACTIVE_CHAT', payload: chatId});
+        setType('contact');
     };
 
     return (

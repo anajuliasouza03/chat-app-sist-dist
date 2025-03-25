@@ -3,12 +3,14 @@
 import { AuthContext } from "@/context/AuthContext";
 import { users } from "@/services/fakeUsers";
 import { useContext, useState } from "react";
+import { useRouter } from "next/navigation";
 
 export default function LoginForm() {
     const { dispatch } = useContext(AuthContext);
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
+    const router = useRouter();
 
     const handleLogin = () => {
         const foundUser = users.find(
@@ -16,6 +18,7 @@ export default function LoginForm() {
         );
         if (foundUser) {
             dispatch({ type: 'LOGIN', payload: foundUser });
+            router.push("/chatPage");
         } else {
             setError('Usuário ou senha inválidos');
         }

@@ -4,14 +4,17 @@ import { AuthContext } from '@/context/AuthContext';
 import { useContext, useState } from 'react';
 import Image from 'next/image';
 import { useView } from '@/context/ViewContext';
+import { useRouter } from 'next/navigation';
 
 export default function Sidebar() {
 
   const [activeSideBar, setActiveSidebar] = useState<"chats" | "contacts">("chats");
   const { dispatch, state } = useContext(AuthContext);
+  const router = useRouter();
 
   const handleLogout = () => {
     dispatch({ type: 'LOGOUT' });
+    router.push('/');
   };
 
   const { setView } = useView();
