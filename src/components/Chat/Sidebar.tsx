@@ -1,11 +1,13 @@
 'use client';
 
 import { AuthContext } from '@/context/AuthContext';
-import { useContext } from 'react';
+import { useContext, useState } from 'react';
 import Image from 'next/image';
 import { useView } from '@/context/ViewContext';
 
 export default function Sidebar() {
+
+  const [activeSideBar, setActiveSidebar] = useState<"chats" | "contacts">("chats");
   const { dispatch, state } = useContext(AuthContext);
 
   const handleLogout = () => {
@@ -14,13 +16,17 @@ export default function Sidebar() {
 
   const { setView } = useView();
 
-const handleChats = () => {
-  setView('chats');
-};
+  const handleChats = () => {
+    setActiveSidebar('chats');
+    setView('chats');
+    
+  };
 
-const handleContacts = () => {
-  setView('contacts');
-};
+  const handleContacts = () => {
+    setActiveSidebar('contacts');
+    setView('contacts')
+
+  };
 
   return (
     <div className="bg-purple-700 text-white w-[100px] flex flex-col items-center justify-between py-4 h-screen">
@@ -40,8 +46,8 @@ const handleContacts = () => {
       </div>
 
       <div className="w-full flex flex-col gap-2">
-        <button onClick={handleChats} className=" font-bold  h-12 hover:border-r-4 border-amber-300 hover:bg-[#612DD1]">Chats</button>
-        <button onClick={handleContacts} className="font-bold h-12 hover:border-r-4 border-amber-300 hover:bg-[#612DD1]">Contatos</button>
+        <button onClick={handleChats} className={ `${activeSideBar === 'chats' ? 'bg-[#612DD1] border-r-4' : 'bg-transparent' } font-bold  h-12 hover:border-r-4 border-amber-300 hover:bg-[#612DD1]`}>Chats</button>
+        <button onClick={handleContacts} className={`${activeSideBar === 'contacts' ? 'bg-[#612DD1] border-r-4' : 'bg-transparent' } font-bold  h-12 hover:border-r-4 border-amber-300 hover:bg-[#612DD1]`}>Contatos</button>
       </div>
 
       <button

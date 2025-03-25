@@ -1,6 +1,6 @@
 'use client'
 
-import { chats as fakeChats } from '@/services/fakeChats';
+import { chats as fakeChats } from '@/services/fakeGroups';
 import { createContext, ReactNode, useReducer } from 'react';
 
 export type Message = {

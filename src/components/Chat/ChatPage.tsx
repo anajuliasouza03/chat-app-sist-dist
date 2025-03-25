@@ -17,6 +17,7 @@ export default function ChatPage() {
       <div className="">
         {view === 'chats' ? <ChatTabs /> : <ContactList />}
       </div>
+    {/*<ChatWindow />*/}
 
     </div>
   );
