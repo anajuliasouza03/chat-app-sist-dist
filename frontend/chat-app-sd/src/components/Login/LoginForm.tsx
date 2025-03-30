@@ -18,7 +18,7 @@ export default function LoginForm() {
         );
         if (foundUser) {
             dispatch({ type: 'LOGIN', payload: foundUser });
-            router.push("/chatPage");
+          router.push("/chatPage");
         } else {
             setError('Usuário ou senha inválidos');
         }

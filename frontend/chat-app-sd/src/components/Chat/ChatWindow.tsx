@@ -67,33 +67,38 @@ export default function ChatWindow() {
 
 
   return (
-    <div className="flex flex-col h-full p-4">
-      <h2 className="text-xl font-bold mb-2 text-[#2F0D5B]">{activeChat.name}</h2>
-      <p className="text-sm font-bold mb-2 text-gray-500">{activeChat.participants?.join(', ')}</p>
-      <div className="flex-1 overflow-y-auto space-y-2">
+    <div className="flex flex-col h-full">
+      {/* Topo: título */}
+      <div className="p-4 border-b border-gray-200">
+        <h2 className="text-xl font-bold mb-1 text-[#2F0D5B]">{activeChat.name}</h2>
+        <p className="text-sm text-gray-500">{activeChat.participants?.join(', ')}</p>
+      </div>
+  
+      {/* Mensagens com scroll */}
+      <div className="flex-1 overflow-y-auto p-4 space-y-2">
         {activeChat.messages.map((msg) => (
-
-        <div
+          <div
             key={msg.id}
             className={`flex ${msg.sender.toLowerCase() === 'você' ? 'justify-end' : 'justify-start'}`}
-        >
+          >
             <div
-                className={`max-w-[70%] p-2 rounded-lg text-sm ${
-                    msg.sender.toLowerCase() === 'você'
-                    ? 'bg-purple-200 text-right'
-                    : 'bg-yellow-100 text-left'
-                }`}
+              className={`max-w-[70%] p-2 rounded-lg text-sm ${
+                msg.sender.toLowerCase() === 'você'
+                  ? 'bg-purple-200 text-right'
+                  : 'bg-yellow-100 text-left'
+              }`}
             >
-                {msg.sender !== 'você' && (
-                    <strong className="block text-xs text-[#2F0D5B] mb-1">{msg.sender}</strong>
-                )}
-                <span>{msg.content}</span>
+              {msg.sender !== 'você' && (
+                <strong className="block text-xs text-[#2F0D5B] mb-1">{msg.sender}</strong>
+              )}
+              <span>{msg.content}</span>
             </div>
-        </div>  
+          </div>
         ))}
       </div>
-
-      <div className="flex items-center gap-2 p-2 bg-white border-t border-purple-400">
+  
+      {/* Input fixo abaixo */}
+      <div className="p-4 border-t border-gray-200 flex items-center gap-2 bg-white">
         <input
           type="text"
           placeholder="Digite sua mensagem..."
@@ -101,11 +106,14 @@ export default function ChatWindow() {
           onChange={(e) => setMessage(e.target.value)}
           className="flex-1 px-4 py-2 rounded-full bg-gray-100 text-sm outline-none"
         />
-        <button onClick={handleSend} className="bg-purple-600 hover:bg-purple-700 text-white text-sm px-4 py-2 rounded-full">
+        <button
+          onClick={handleSend}
+          className="bg-purple-600 hover:bg-purple-700 text-white text-sm px-4 py-2 rounded-full"
+        >
           Enviar
         </button>
       </div>
-
     </div>
   );
+  
 }

@@ -15,10 +15,10 @@ export default function ChatPage() {
   return (
     <div className="text-black h-screen w-screen grid grid-cols-[100px_350px_1fr] bg-white">
       <Sidebar />
-      <div className="">
+      <div className="h-screen overflow-hidden">
         {view === 'chats' ? <ChatTabs /> : <ContactList />}
       </div>
-    <div className="border-l border-gray-200">
+    <div className="border-l border-gray-200 h-screen flex flex-col">
       <ChatWindow />
     </div>
 
