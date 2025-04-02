@@ -28,7 +28,9 @@ type ChatState = {
 type ChatAction = 
     | {type: 'SET_ACTIVE_CHAT'; payload: string}
     | {type: 'SEND_MESSAGE'; payload: {chatId: string; message: Message}}
-    | { type: 'CREATE_CHAT'; payload: Chat };
+    | { type: 'CREATE_CHAT'; payload: Chat }
+    | { type: 'DELETE_CHAT'; payload: string };
+
 
 const initialStateContacts: ChatState = {
     chats: fakeChatsContacts,
@@ -52,12 +54,20 @@ function chatReducer(state: ChatState, action: ChatAction): ChatState {
         });
         return { ...state, chats: updatedChats };
   
-      case 'CREATE_CHAT': // 👈 Adicione isto
+      case 'CREATE_CHAT': 
         return {
           ...state,
           chats: [...state.chats, action.payload],
           activeChatId: action.payload.id,
         };
+
+      case 'DELETE_CHAT':
+        return {
+          ...state,
+          chats: state.chats.filter((chat) => chat.id !== action.payload),
+          activeChatId: state.activeChatId === action.payload ? null : state.activeChatId,
+        };
+        
   
       default:
         return state;

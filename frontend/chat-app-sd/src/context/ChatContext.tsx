@@ -25,10 +25,13 @@ type ChatState = {
     activeChatId: string | null;
 };
 
-type ChatAction = 
-    | {type: 'SET_ACTIVE_CHAT'; payload: string}
-    | {type: 'SEND_MESSAGE'; payload: {chatId: string; message: Message}}
-    | { type: 'CREATE_CHAT'; payload: Chat };
+type ChatAction =
+  | { type: 'SET_ACTIVE_CHAT'; payload: string }
+  | { type: 'SEND_MESSAGE'; payload: { chatId: string; message: Message } }
+  | { type: 'CREATE_CHAT'; payload: Chat }
+  | { type: 'EDIT_CHAT_NAME'; payload: { chatId: string; newName: string } }
+  | { type: 'DELETE_CHAT'; payload: string };
+
 
 const initialState: ChatState = {
     chats: fakeChats,
@@ -58,6 +61,24 @@ function chatReducer(state: ChatState, action: ChatAction): ChatState {
           chats: [...state.chats, action.payload],
           activeChatId: action.payload.id,
         };
+
+      case 'EDIT_CHAT_NAME':
+        return {
+          ...state,
+          chats: state.chats.map(chat =>
+            chat.id === action.payload.chatId
+              ? { ...chat, name: action.payload.newName }
+              : chat
+          ),
+        };
+      
+      case 'DELETE_CHAT':
+        return {
+          ...state,
+          chats: state.chats.filter(chat => chat.id !== action.payload),
+          activeChatId: state.activeChatId === action.payload ? null : state.activeChatId,
+        };
+        
   
       default:
         return state;

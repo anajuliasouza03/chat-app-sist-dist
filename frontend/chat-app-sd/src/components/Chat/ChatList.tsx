@@ -27,58 +27,119 @@ export default function ChatList() {
         setType('contact');
     };
 
+    const handleEditChat = (chatId: string) => {
+        const newName = prompt("Digite o novo nome do grupo:");
+        if (newName?.trim()) {
+          dispatch({ type: "EDIT_CHAT_NAME", payload: { chatId, newName } });
+        }
+    };
+      
+    const handleDeleteChat = (chatId: string) => {
+        if (confirm("Tem certeza que deseja excluir este grupo?")) {
+          dispatch({ type: "DELETE_CHAT", payload: chatId });
+        }
+    };
+
+    const handleDeleteChatContext = (chatId: string) => {
+        if (confirm("Tem certeza que deseja excluir esta conversa?")) {
+          dispatchChatsContext({ type: "DELETE_CHAT", payload: chatId });
+        }
+    };
+      
+      
+
     return (
         <div className="flex flex-col gap-3">
             <h1 className="font-bold text-[#2F0D5B]">Grupos</h1>
 
             {chats.map((chat) => (
-            <button
-                    key={chat.id}
-                    onClick={() => handleSelectedChat(chat.id)}
-                    className={`flex items-center gap-3 p-2 rounded-lg text-left hover:bg-purple-100 transition-all ${
-                    activeChatId === chat.id ? 'bg-purple-100' : 'bg-white'
-                    }`}
+            <div
+                key={chat.id}
+                className={`flex items-center justify-between gap-3 p-2 rounded-lg text-left hover:bg-purple-100 transition-all ${
+                activeChatId === chat.id ? "bg-purple-100" : "bg-white"
+                }`}
             >
-                    <Image
-                        src={chat.avatar}
-                        alt={chat.name}
-                        width={40}
-                        height={40}
-                        className="rounded-full"
-                    />
-                    <div className="flex flex-col">
-                    <span className="text-sm font-semibold text-[#2F0D5B]">{chat.name}</span>
-                    <span className="text-xs text-gray-500 truncate max-w-[200px]">
-                        {chat.messages[chat.messages.length - 1]?.content}
+                <button
+                onClick={() => handleSelectedChat(chat.id)}
+                className="flex items-center gap-3 flex-1 text-left"
+                >
+                <Image
+                    src={chat.avatar}
+                    alt={chat.name}
+                    width={40}
+                    height={40}
+                    className="rounded-full"
+                />
+                <div className="flex flex-col">
+                    <span className="text-sm font-semibold text-[#2F0D5B]">
+                    {chat.name}
                     </span>
-                    </div>
-            </button>
+                    <span className="text-xs text-gray-500 truncate max-w-[200px]">
+                    {chat.messages[chat.messages.length - 1]?.content}
+                    </span>
+                </div>
+                </button>
+
+                <div className="flex gap-3">
+                <button
+                    onClick={() => handleEditChat(chat.id)}
+                    className="text-purple-700 text-sm hover:underline"
+                    title="Editar nome"
+                >
+                    editar
+                </button>
+                <button
+                    onClick={() => handleDeleteChat(chat.id)}
+                    className="text-red-600 text-sm hover:underline"
+                    title="Excluir grupo"
+                >
+                    excluir
+                </button>
+                </div>
+            </div>
             ))}
+
+
             <h1 className="font-bold text-[#2F0D5B]">Conversas</h1>
 
             {chatsChatsContacts.map((chat) => (
-            <button
-                    key={chat.id}
-                    onClick={() => handleSelectedChatContext(chat.id)}
-                    className={`flex items-center gap-3 p-2 rounded-lg text-left hover:bg-purple-100 transition-all ${
-                    activeChatIDChatsContacts === chat.id ? 'bg-purple-100' : 'bg-white'
-                    }`}
+            <div
+                key={chat.id}
+                className={`flex items-center justify-between gap-3 p-2 rounded-lg text-left hover:bg-purple-100 transition-all ${
+                activeChatIDChatsContacts === chat.id ? "bg-purple-100" : "bg-white"
+                }`}
             >
-                    <Image
-                        src={chat.avatar}
-                        alt={chat.name}
-                        width={40}
-                        height={40}
-                        className="rounded-full"
-                    />
-                    <div className="flex flex-col">
-                    <span className="text-sm font-semibold text-[#2F0D5B]">{chat.name}</span>
-                    <span className="text-xs text-gray-500 truncate max-w-[200px]">
-                        {chat.messages[chat.messages.length - 1]?.content}
+                <button
+                onClick={() => handleSelectedChatContext(chat.id)}
+                className="flex items-center gap-3 flex-1 text-left"
+                >
+                <Image
+                    src={chat.avatar}
+                    alt={chat.name}
+                    width={40}
+                    height={40}
+                    className="rounded-full"
+                />
+                <div className="flex flex-col">
+                    <span className="text-sm font-semibold text-[#2F0D5B]">
+                    {chat.name}
                     </span>
-                    </div>
-            </button>
+                    <span className="text-xs text-gray-500 truncate max-w-[200px]">
+                    {chat.messages[chat.messages.length - 1]?.content}
+                    </span>
+                </div>
+                </button>
+
+                <button
+                onClick={() => handleDeleteChatContext(chat.id)}
+                className="text-red-600 text-sm hover:underline"
+                title="Excluir conversa"
+                >
+                excluir
+                </button>
+            </div>
             ))}
+
             
 
         </div>
