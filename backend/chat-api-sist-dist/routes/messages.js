@@ -17,7 +17,7 @@ router.get('/messages', (req, res) => {
     return res.status(401).json({error: 'Id do chat é obrigatório'});
   }
 
-  const chatExists = chats.find(n => n.id === Number(chatId));
+  const chatExists = chats.find(n => n.id === chatId);
 
   if(!chatExists){
     return res.status(401).json({error: 'Id do chat inválido'});

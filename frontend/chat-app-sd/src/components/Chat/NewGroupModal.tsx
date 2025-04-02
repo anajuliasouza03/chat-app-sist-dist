@@ -6,7 +6,6 @@ import { ChatContext } from '@/context/ChatContext';
 import { useActiveChatType } from '@/context/ActiveChatTypeContext';
 import { useView } from '@/context/ViewContext';
 import { contacts } from '@/services/fakeContacts';
-import { v4 as uuidv4 } from 'uuid';
 
 type Props = {
   onClose: () => void;
@@ -27,30 +26,49 @@ export default function NewGroupModal({ onClose }: Props) {
     );
   };
 
-  
-  const handleCreateGroup = () => {
+  const handleCreateGroup = async () => {
     if (!groupName.trim() || selectedContacts.length === 0 || !authState.user) return;
- 
-    const selectedNames = contacts
-      .filter((contact) => selectedContacts.includes(contact.id))
-      .map((contact) => contact.name);
-  
-    const newGroup = {
-      id: uuidv4(),
-      name: groupName,
-      avatar: '/assets/icon1.png',
-      messages: [],
-      participants: [authState.user.name, ...selectedNames], 
+
+    const participantes = [
+      { id: Number(authState.user.id), name: authState.user.name },
+      ...contacts
+        .filter((contact) => selectedContacts.includes(contact.id))
+        .map((c) => ({ id: Number(c.id), name: c.name }))
+    ];
+
+    const payload = {
+      participants: participantes,
+      messages: []
     };
-  
-    dispatch({ type: 'CREATE_CHAT', payload: newGroup });
-    setType('group');
-    setView('chats');
-    console.log('Criando grupo:', newGroup);
-    onClose();
+
+    try {
+      console.log("📦 Enviando payload:", payload);
+
+      const res = await fetch('http://localhost:3001/api/chats', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      if (!res.ok) {
+        const text = await res.text();
+        throw new Error(`Erro na resposta: ${res.status} - ${text}`);
+      }
+
+      const newGroup = await res.json();
+      newGroup.name = groupName;
+      newGroup.avatar = '/assets/icon1.png';
+
+      dispatch({ type: 'CREATE_CHAT', payload: newGroup });
+      dispatch({ type: 'SET_ACTIVE_CHAT', payload: newGroup.id });
+      setType('group');
+      setView('chats');
+      onClose();
+    } catch (err) {
+      console.error('❌ Erro ao criar grupo:', err);
+      alert('Erro ao criar grupo. Verifique o console.');
+    }
   };
-  
-  
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">

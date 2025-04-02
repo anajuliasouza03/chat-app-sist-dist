@@ -29,7 +29,10 @@ type ChatAction =
     | {type: 'SET_ACTIVE_CHAT'; payload: string}
     | {type: 'SEND_MESSAGE'; payload: {chatId: string; message: Message}}
     | { type: 'CREATE_CHAT'; payload: Chat }
-    | { type: 'DELETE_CHAT'; payload: string };
+    | { type: 'DELETE_CHAT'; payload: string }
+    | { type: 'SET_MESSAGES'; payload: { chatId: string; messages: Message[] } }
+    | { type: 'SET_ALL_CHATS'; payload: Chat[] }
+
 
 
 const initialStateContacts: ChatState = {
@@ -67,8 +70,24 @@ function chatReducer(state: ChatState, action: ChatAction): ChatState {
           chats: state.chats.filter((chat) => chat.id !== action.payload),
           activeChatId: state.activeChatId === action.payload ? null : state.activeChatId,
         };
+      case 'SET_MESSAGES':
+        return {
+          ...state,
+          chats: state.chats.map(chat =>
+            chat.id === action.payload.chatId
+              ? { ...chat, messages: action.payload.messages }
+              : chat
+          ),
+        };
+        case 'SET_ALL_CHATS':
+          return {
+            ...state,
+            chats: action.payload,
+            activeChatId: action.payload.length > 0 ? action.payload[0].id : null
+            
+          };
         
-  
+
       default:
         return state;
     }

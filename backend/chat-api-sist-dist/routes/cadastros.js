@@ -38,7 +38,15 @@ router.post('/login', (req, res) => {
         return res.status(401).json({error: 'Senha inválida'});
     }
     // Simples validação (em produção, use bcrypt + JWT)
-    res.json({ success: true, username: user.name });
+    res.json({
+        success: true,
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        avatar: user.avatar || '/assets/default-avatar.png' 
+     //   password: user.password 
+      });
+      
   });
 
 module.exports = router;

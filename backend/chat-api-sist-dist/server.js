@@ -6,7 +6,7 @@ const chatsRoutes = require('./routes/chats');
 const cadastrosRoutes = require('./routes/cadastros');
 
 const app = express();
-const PORT = 3000;
+const PORT = 3001;
 
 // Middleware
 app.use(cors());
