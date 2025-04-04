@@ -41,16 +41,18 @@ export default function ChatList() {
       console.error("❌ Erro ao buscar chats:", err);
     }
   };
-  //!!!!crie um user effect para atualizar minha chatList toda vez que tiver alguma alteração (sempre que tiver um grupo novo ou um chat novo)
-  useEffect(() => {
-    fetchChats(); //atualiza a lista de chats sempre que o usuário muda
-  }, [authState.user]);
 
-  // useEffect para escutar a mudança no estado de grupos e conversas
   useEffect(() => {
-  //  console.log("Grupos atualizados: ", grupos);  // Verifique se os dados estão sendo atualizados corretamente
-    fetchChats(); // Sempre que houver mudança no estado de grupos, refaz a busca (se necessário)
+    fetchChats();
+  }, [authState.user]);
+  
+  useEffect(() => {
+    fetchChats(); 
   }, [grupos]);
+
+  useEffect(() => {
+      fetchChats(); 
+  }, [conversas]);
 
   const handleSelectedChat = (chatId: string) => {
     dispatch({ type: 'SET_ACTIVE_CHAT', payload: chatId });
