@@ -1,103 +1,173 @@
 'use client';
 
-import { useContext } from "react";
+import { useContext, useEffect, useMemo, useState } from "react";
 import { ChatContext } from "@/context/ChatContext";
 import { ChatContactsContext } from "@/context/ChatContactsContext";
 import { useActiveChatType } from "@/context/ActiveChatTypeContext";
-import { useState } from 'react';
-import { v4 as uuidv4 } from 'uuid';
-
+import { AuthContext } from "@/context/AuthContext";
 
 export default function ChatWindow() {
-  const { state: groupState } = useContext(ChatContext);
-  const { state: contactState } = useContext(ChatContactsContext);
-
-  const activeGroup = groupState.chats.find(chat => chat.id === groupState.activeChatId);
-  const activeContact = contactState.chats.find(chat => chat.id === contactState.activeChatId);
-
-  console.log("activeGroup:", groupState.activeChatId, activeGroup);
-  console.log("activeContact:", contactState.activeChatId, activeContact);
-
-  const { dispatch: dispatchGroup } = useContext(ChatContext);
-  const { dispatch: dispatchContact } = useContext(ChatContactsContext);
-
-
-  let activeChat = null;
-
+  const { state: groupState, dispatch: dispatchGroup } = useContext(ChatContext);
+  const { state: contactState, dispatch: dispatchContact } = useContext(ChatContactsContext);
+  const { state: authState } = useContext(AuthContext);
   const { type } = useActiveChatType();
-
-  if (type === 'group') {
-    activeChat = activeGroup;
-  } else if (type === 'contact') {
-    activeChat = activeContact;
-  }
-
-  if (!activeChat) {
-    return <div className="p-5 text-gray-500 flex justify-center h-screen items-center">Selecione um chat para começar</div>;
-  }
 
   const [message, setMessage] = useState('');
 
-  const handleSend = () => {
-    if (!message.trim() || !activeChat) return;
+  const activeChat =
+    type === 'group'
+      ? groupState.chats.find(chat => chat.id === groupState.activeChatId)
+      : type === 'contact'
+        ? contactState.chats.find(chat => chat.id === contactState.activeChatId)
+        : null;
   
-    const newMessage = {
-      id: uuidv4(), // gera id único
-      sender: 'Você',
-      content: message,
-      timestamp: new Date().toISOString(),
-    };
-  
-    if (type === 'group') {
-      dispatchGroup({
-        type: 'SEND_MESSAGE',
-        payload: { chatId: activeChat.id, message: newMessage },
-      });
-    } else if (type === 'contact') {
-      dispatchContact({
-        type: 'SEND_MESSAGE',
-        payload: { chatId: activeChat.id, message: newMessage },
-      });
+  useEffect(() => {
+    if (activeChat) {
+      fetchMessages(); // Carrega as mensagens da conversa selecionada
     }
-  
-    setMessage('');
+  }, [activeChat?.id, type]); 
+
+  const fetchMessages = async () => {
+    if (!activeChat) return;
+    try {
+      const url = `http://localhost:3001/api/messages?chatId=${activeChat.id}`;
+      console.log("🌐 Buscando mensagens de:", url);
+
+      const res = await fetch(url);
+
+      if (!res.ok) {
+        console.error("❌ Erro HTTP:", res.status, await res.text());
+        return;
+      }
+
+      const data = await res.json();
+      console.log("📦 Mensagens recebidas da API:", data);
+
+      const formattedMessages = data.map((msg: any) => ({
+        id: msg.id.toString(),
+        sender: msg.userName,
+        content: msg.content,
+        timestamp: msg.timestamp,
+      }));
+
+      const action = {
+        type: "SET_MESSAGES",
+        payload: {
+          chatId: activeChat.id,
+          messages: formattedMessages,
+        },
+      } as const;
+
+      type === 'group' ? dispatchGroup(action) : dispatchContact(action);
+    } catch (err) {
+      console.error("❌ Erro ao carregar mensagens:", err);
+    }
   };
 
+  useEffect(() => {
+    fetchMessages();
+  }, [type, activeChat?.id]);
 
+  //useMemo
+  /*
+  const isMine = useMemo(() => {
+    if (activeChat) {
+      return activeChat.messages.map((msg) => {
+        // Verifica se a mensagem é do usuário logado
+        return msg.sender && msg.sender.trim().toLowerCase() === authState.user?.name.trim().toLowerCase();
+      });
+    }
+  }, [authState.user?.name, activeChat?.messages]);
+*/
+  
+  const handleSend = async () => {
+    if (!message.trim() || !authState.user || !activeChat) return;
+
+    const payload = {
+      userId: Number(authState.user.id),
+      chatId: activeChat.id,
+      content: message,
+      userName: authState.user.name,
+    };
+
+    try {
+      const response = await fetch("http://localhost:3001/api/messages", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      const result = await response.json();
+      console.log("📤 Mensagem enviada:", result);
+
+      const newMessage = {
+        id: Date.now().toString(),
+        sender: authState.user.name, //sender é o user logado
+        content: message,
+        timestamp: new Date().toISOString(),
+      };
+
+      const action = {
+        type: "SEND_MESSAGE",
+        payload: {
+          chatId: activeChat.id,
+          message: newMessage,
+        },
+      } as const;
+
+      type === 'group' ? dispatchGroup(action) : dispatchContact(action);
+      setMessage('');
+    } catch (err) {
+      console.error("❌ Erro ao enviar:", err);
+    }
+  };
+
+  if (!activeChat) {
+    return (
+      <div className="p-5 text-gray-500 flex justify-center h-screen items-center">
+        Selecione um chat para começar
+      </div>
+    );
+  }
 
 
   return (
     <div className="flex flex-col h-full">
-      {/* Topo: título */}
+      {/* Título do chat */}
       <div className="p-4 border-b border-gray-200">
         <h2 className="text-xl font-bold mb-1 text-[#2F0D5B]">{activeChat.name}</h2>
-        <p className="text-sm text-gray-500">{activeChat.participants?.join(', ')}</p>
+        <p className="text-sm text-gray-500">
+          {activeChat.participants?.map((p: any) => p.name || p).join(', ')}
+        </p>
       </div>
-  
-      {/* Mensagens com scroll */}
+
+      {/* Mensagens */}
       <div className="flex-1 overflow-y-auto p-4 space-y-2">
-        {activeChat.messages.map((msg) => (
-          <div
-            key={msg.id}
-            className={`flex ${msg.sender.toLowerCase() === 'você' ? 'justify-end' : 'justify-start'}`}
-          >
+      {activeChat.messages.map((msg) => {
+
+       // Verifica se a mensagem é do usuário logado
+      const isMineMessage = msg.sender && msg.sender.trim().toLowerCase() === authState.user?.name.trim().toLowerCase();
+
+      return (
+          <div key={msg.id} className={`flex ${isMineMessage ? 'justify-end' : 'justify-start'}`}>
             <div
               className={`max-w-[70%] p-2 rounded-lg text-sm ${
-                msg.sender.toLowerCase() === 'você'
-                  ? 'bg-purple-200 text-right'
-                  : 'bg-yellow-100 text-left'
+                isMineMessage ? 'bg-purple-200 text-right' : 'bg-yellow-100 text-left'
               }`}
             >
-              {msg.sender !== 'você' && (
+              {!isMineMessage && (
                 <strong className="block text-xs text-[#2F0D5B] mb-1">{msg.sender}</strong>
               )}
+
               <span>{msg.content}</span>
             </div>
           </div>
-        ))}
+        );
+      })}
+
       </div>
-  
-      {/* Input fixo abaixo */}
+
+      {/* Campo de mensagem */}
       <div className="p-4 border-t border-gray-200 flex items-center gap-2 bg-white">
         <input
           type="text"
@@ -115,5 +185,4 @@ export default function ChatWindow() {
       </div>
     </div>
   );
-  
 }

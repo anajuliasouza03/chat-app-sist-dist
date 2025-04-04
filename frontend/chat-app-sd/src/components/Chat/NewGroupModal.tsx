@@ -6,7 +6,6 @@ import { ChatContext } from '@/context/ChatContext';
 import { useActiveChatType } from '@/context/ActiveChatTypeContext';
 import { useView } from '@/context/ViewContext';
 import { contacts } from '@/services/fakeContacts';
-import { v4 as uuidv4 } from 'uuid';
 
 type Props = {
   onClose: () => void;
@@ -21,36 +20,81 @@ export default function NewGroupModal({ onClose }: Props) {
   const [groupName, setGroupName] = useState('');
   const [selectedContacts, setSelectedContacts] = useState<string[]>([]);
 
+  const [grupos, setGrupos] = useState<any[]>([]); // Defina o estado de grupos
+  const [conversas, setConversas] = useState<any[]>([]); // Defina o estado de conversas
+
+
   const handleToggleContact = (id: string) => {
     setSelectedContacts((prev) =>
       prev.includes(id) ? prev.filter((cid) => cid !== id) : [...prev, id]
     );
   };
 
-  
-  const handleCreateGroup = () => {
+  const handleCreateGroup = async () => {
     if (!groupName.trim() || selectedContacts.length === 0 || !authState.user) return;
- 
-    const selectedNames = contacts
-      .filter((contact) => selectedContacts.includes(contact.id))
-      .map((contact) => contact.name);
-  
-    const newGroup = {
-      id: uuidv4(),
+
+    const participantes = [
+      { id: authState.user.id, name: authState.user.name },
+      ...contacts
+        .filter((contact) => selectedContacts.includes(String(contact.id)))
+        .map((c) => ({ id: String(c.id), name: c.name }))
+    ];
+
+    const payload = {
       name: groupName,
-      avatar: '/assets/icon1.png',
-      messages: [],
-      participants: [authState.user.name, ...selectedNames], 
+      participants: participantes,
+      messages: []
     };
-  
-    dispatch({ type: 'CREATE_CHAT', payload: newGroup });
-    setType('group');
-    setView('chats');
-    console.log('Criando grupo:', newGroup);
-    onClose();
+
+    try {
+      console.log("📦 Enviando payload:", payload);
+
+      const res = await fetch('http://localhost:3001/api/chats', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      if (!res.ok) {
+        const text = await res.text();
+        throw new Error(`Erro na resposta: ${res.status} - ${text}`);
+      }
+
+      const newGroup = await res.json();
+      newGroup.name = groupName;
+      newGroup.avatar = '/assets/icon1.png';
+
+      ///
+
+      // Log antes de atualizar os estados de grupos e conversas
+      //console.log("Novo grupo criado:", newGroup);
+
+      // Atualiza o estado localmente com o novo grupo criado
+      setGrupos((prev) => {
+        //console.log("Grupos atualizados:", [...prev, newGroup]); // Verifique aqui
+        return [...prev, newGroup];
+      });
+      setConversas((prev) => {
+        //console.log("Conversas atualizadas:", [...prev, newGroup]); // Verifique aqui
+        return [...prev, newGroup]; // Se for uma conversa, adicione também
+      });
+
+
+      ///
+
+      dispatch({ type: 'CREATE_CHAT', payload: newGroup });
+      dispatch({ type: 'SET_ACTIVE_CHAT', payload: newGroup.id });
+      setType('group');
+      setView('chats');
+
+    //  fetchChats();
+
+      onClose();
+    } catch (err) {
+      console.error('❌ Erro ao criar grupo:', err);
+      alert('Erro ao criar grupo. Verifique o console.');
+    }
   };
-  
-  
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
@@ -70,8 +114,8 @@ export default function NewGroupModal({ onClose }: Props) {
             <label key={contact.id} className="flex items-center gap-2">
               <input
                 type="checkbox"
-                checked={selectedContacts.includes(contact.id)}
-                onChange={() => handleToggleContact(contact.id)}
+                checked={selectedContacts.includes(String(contact.id))}
+                onChange={() => handleToggleContact(String(contact.id))}
               />
               <img src={contact.avatar} alt={contact.name} className="w-8 h-8 rounded-full" />
               <span>{contact.name}</span>
