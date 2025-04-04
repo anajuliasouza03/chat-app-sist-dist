@@ -30,6 +30,7 @@ export default function NewChatModal({ onClose }: Props) {
     const contactIdNum = Number(contact.id);
   
     const payload = {
+    //  name: contact.name,
       participants: [
         { id: userId, name: user.name },
         { id: contactIdNum, name: contact.name }
@@ -37,7 +38,7 @@ export default function NewChatModal({ onClose }: Props) {
       messages: []
     };
   
-    console.log("📦 Enviando payload:", JSON.stringify(payload, null, 2));
+    console.log(" Enviando payload:", JSON.stringify(payload, null, 2));
   
     try {
       const res = await fetch('http://localhost:3001/api/chats', {
@@ -53,8 +54,8 @@ export default function NewChatModal({ onClose }: Props) {
   
       const newChat = await res.json();
   
-      newChat.name = contact.name;
-      newChat.avatar = contact.avatar;
+      newChat.name = newChat.name || 'Novo chat';
+      newChat.avatar = contact.avatar || '/assets/icon1.png';
   
       dispatch({ type: 'CREATE_CHAT', payload: newChat });
       dispatch({ type: 'SET_ACTIVE_CHAT', payload: newChat.id });
@@ -62,7 +63,7 @@ export default function NewChatModal({ onClose }: Props) {
       setView('chats');
       onClose();
     } catch (err) {
-      console.error('❌ Erro ao criar novo chat:', err);
+      console.error(' Erro ao criar novo chat:', err);
       alert('Erro ao criar chat. Verifique o console.');
     }
   };

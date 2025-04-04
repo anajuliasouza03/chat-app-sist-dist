@@ -1,6 +1,6 @@
 'use client';
 
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useMemo, useState } from "react";
 import { ChatContext } from "@/context/ChatContext";
 import { ChatContactsContext } from "@/context/ChatContactsContext";
 import { useActiveChatType } from "@/context/ActiveChatTypeContext";
@@ -20,6 +20,12 @@ export default function ChatWindow() {
       : type === 'contact'
         ? contactState.chats.find(chat => chat.id === contactState.activeChatId)
         : null;
+  
+  useEffect(() => {
+    if (activeChat) {
+      fetchMessages(); // Carrega as mensagens da conversa selecionada
+    }
+  }, [activeChat?.id, type]); 
 
   const fetchMessages = async () => {
     if (!activeChat) return;
@@ -62,6 +68,18 @@ export default function ChatWindow() {
     fetchMessages();
   }, [type, activeChat?.id]);
 
+  //useMemo
+  /*
+  const isMine = useMemo(() => {
+    if (activeChat) {
+      return activeChat.messages.map((msg) => {
+        // Verifica se a mensagem é do usuário logado
+        return msg.sender && msg.sender.trim().toLowerCase() === authState.user?.name.trim().toLowerCase();
+      });
+    }
+  }, [authState.user?.name, activeChat?.messages]);
+*/
+  
   const handleSend = async () => {
     if (!message.trim() || !authState.user || !activeChat) return;
 
@@ -84,7 +102,7 @@ export default function ChatWindow() {
 
       const newMessage = {
         id: Date.now().toString(),
-        sender: "Você",
+        sender: authState.user.name, //sender é o user logado
         content: message,
         timestamp: new Date().toISOString(),
       };
@@ -112,6 +130,7 @@ export default function ChatWindow() {
     );
   }
 
+
   return (
     <div className="flex flex-col h-full">
       {/* Título do chat */}
@@ -125,18 +144,21 @@ export default function ChatWindow() {
       {/* Mensagens */}
       <div className="flex-1 overflow-y-auto p-4 space-y-2">
       {activeChat.messages.map((msg) => {
-      const isMine = msg.sender === authState.user?.name;
 
-        return (
-          <div key={msg.id} className={`flex ${isMine ? 'justify-end' : 'justify-start'}`}>
+       // Verifica se a mensagem é do usuário logado
+      const isMineMessage = msg.sender && msg.sender.trim().toLowerCase() === authState.user?.name.trim().toLowerCase();
+
+      return (
+          <div key={msg.id} className={`flex ${isMineMessage ? 'justify-end' : 'justify-start'}`}>
             <div
               className={`max-w-[70%] p-2 rounded-lg text-sm ${
-                isMine ? 'bg-purple-200 text-right' : 'bg-yellow-100 text-left'
+                isMineMessage ? 'bg-purple-200 text-right' : 'bg-yellow-100 text-left'
               }`}
             >
-              {!isMine && (
+              {!isMineMessage && (
                 <strong className="block text-xs text-[#2F0D5B] mb-1">{msg.sender}</strong>
               )}
+
               <span>{msg.content}</span>
             </div>
           </div>

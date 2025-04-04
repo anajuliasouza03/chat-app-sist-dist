@@ -16,11 +16,13 @@ export default function ChatList() {
   const [grupos, setGrupos] = useState<Chat[]>([]);
   const [conversas, setConversas] = useState<Chat[]>([]);
 
-  // 🔁 Função reutilizável para buscar os chats
+  // Função reutilizável para buscar os chats
   const fetchChats = async () => {
     try {
       const response = await fetch("http://localhost:3001/api/chats");
       const data = await response.json();
+
+      //console.log("Chats recebidos da API:", data);
 
       const userChats = data.filter((chat: any) =>
         chat.participants?.some((p: any) => p.name === authState.user?.name)
@@ -39,10 +41,16 @@ export default function ChatList() {
       console.error("❌ Erro ao buscar chats:", err);
     }
   };
-
+  //!!!!crie um user effect para atualizar minha chatList toda vez que tiver alguma alteração (sempre que tiver um grupo novo ou um chat novo)
   useEffect(() => {
-    fetchChats();
+    fetchChats(); //atualiza a lista de chats sempre que o usuário muda
   }, [authState.user]);
+
+  // useEffect para escutar a mudança no estado de grupos e conversas
+  useEffect(() => {
+  //  console.log("Grupos atualizados: ", grupos);  // Verifique se os dados estão sendo atualizados corretamente
+    fetchChats(); // Sempre que houver mudança no estado de grupos, refaz a busca (se necessário)
+  }, [grupos]);
 
   const handleSelectedChat = (chatId: string) => {
     dispatch({ type: 'SET_ACTIVE_CHAT', payload: chatId });
@@ -129,7 +137,7 @@ export default function ChatList() {
               className="rounded-full"
             />
             <div className="flex flex-col">
-              <span className="text-sm font-semibold text-[#2F0D5B]">{chat.name}</span>
+              <span className="text-sm font-semibold text-[#2F0D5B]">{chat.name || "sem nome"}</span>
               <span className="text-xs text-gray-500 truncate max-w-[200px]">
                 {chat.messages[chat.messages.length - 1]?.content}
               </span>
@@ -159,7 +167,7 @@ export default function ChatList() {
               className="rounded-full"
             />
             <div className="flex flex-col">
-              <span className="text-sm font-semibold text-[#2F0D5B]">{chat.name}</span>
+              <span className="text-sm font-semibold text-[#2F0D5B]">{chat.name || "sem nome"}</span>
               <span className="text-xs text-gray-500 truncate max-w-[200px]">
                 {chat.messages[chat.messages.length - 1]?.content}
               </span>

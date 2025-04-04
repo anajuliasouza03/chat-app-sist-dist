@@ -1,16 +1,16 @@
 // db.js atualizado com grupos e contatos
 
 const cadastros = [
-  { id: 1, name: "Ana Júlia", email: "ana@gmail.com", password: "1234" },
-  { id: 2, name: "Leonardo", email: "leo@gmail.com", password: "abcd" },
-  { id: 3, name: "Ciclano", email: "ciclano@email.com", password: "1234" },
-  { id: 4, name: "Fulano", email: "fulano@email.com", password: "1234" },
-  { id: 5, name: "Beltrano", email: "beltrano@email.com", password: "1234" },
-  { id: 6, name: "João", email: "joao@email.com", password: "1234" },
-  { id: 7, name: "Maria", email: "maria@email.com", password: "1234" },
-  { id: 8, name: "Aluno A", email: "alunoa@email.com", password: "1234" },
-  { id: 9, name: "Aluno B", email: "alunob@email.com", password: "1234" },
-  { id: 10, name: "Lucas", email: "lucas@email.com", password: "1234" },
+  { id: 1, name: "Ana Júlia", avatar: "/assets/icon1.png", email: "ana@gmail.com", password: "1234" },
+  { id: 2, name: "Leonardo", avatar: "/assets/icon1.png", email: "leo@gmail.com", password: "abcd" },
+  { id: 3, name: "Ciclano", avatar: "/assets/icon1.png", email: "ciclano@email.com", password: "1234" },
+  { id: 4, name: "Fulano", avatar: "/assets/icon1.png", email: "fulano@email.com", password: "1234" },
+  { id: 5, name: "Beltrano", avatar: "/assets/icon1.png", email: "beltrano@email.com", password: "1234" },
+  { id: 6, name: "João", avatar: "/assets/icon1.png", email: "joao@email.com", password: "1234" },
+  { id: 7, name: "Maria", avatar: "/assets/icon1.png", email: "maria@email.com", password: "1234" },
+  { id: 8, name: "Aluno A", avatar: "/assets/icon1.png", email: "alunoa@email.com", password: "1234" },
+  { id: 9, name: "Aluno B", avatar: "/assets/icon1.png", email: "alunob@email.com", password: "1234" },
+  { id: 10, name: "Lucas", avatar: "/assets/icon1.png", email: "lucas@email.com", password: "1234" },
 ];
 
 const chats = [

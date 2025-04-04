@@ -29,35 +29,43 @@ router.get('/messages', (req, res) => {
 
 // Rota POST para adicionar uma nova mensagem
 router.post('/messages', (req, res) => {
-  //Usa desestruturação para extrair userId e content do req.body (o corpo da requisição).
   const { userId, chatId, content, userName } = req.body;
-
-  if( !userId || !chatId || !content || !userName){
-    return res.status(400).json({ error: 'Úsuário e conteúdo são obrigatórios'});
+  //validação dos dados
+  if (!userId || !chatId || !content || !userName) {
+    return res.status(400).json({ error: 'Usuário, conteúdo e nome são obrigatórios' });
   }
-
+  //verifica se o usuário existe
   const userExists = cadastros.find(user => user.id === userId);
-
-  if(!userExists){
-    return res.status(400).json({error: 'Usuário não encontrado'});
+  if (!userExists) {
+    return res.status(400).json({ error: 'Usuário não encontrado' });
   }
-
+  //verifica se o chat existe
   const chatExists = chats.find(n => n.id === chatId);
-
-  if(!chatExists){
-    return res.status(400).json({error: 'Chat inválido'});
+  if (!chatExists) {
+    return res.status(400).json({ error: 'Chat inválido' });
   }
-
+  //verifica se o usuário está no chat
   const userIsInChat = chatExists.participants.find(user => user.id === userId);
-
-  if(!userIsInChat){
-    return res.status(400).json({error : 'Esse usuário não está nesse chat'});
+  if (!userIsInChat) {
+    return res.status(400).json({ error: 'Esse usuário não está nesse chat' });
   }
 
-  const newMessage = new Message(chatExists.messages.length + 1, userId, chatId, content, userName);
+  // Criação da nova mensagem com os dados recebidos
+  const newMessage = new Message(
+    chatExists.messages.length + 1,  // ID da mensagem
+    userId,                          // ID do usuário
+    chatId,                          // ID do chat
+    content,                         // Conteúdo da mensagem
+    userName                         // Nome do usuário
+  );
+
   chatExists.messages.push(newMessage);
+  console.log('->nova mensagem:', newMessage);
+  
+  // Responde com a nova mensagem criada
   res.status(201).json(newMessage);
 });
+
 
 module.exports = router;
 

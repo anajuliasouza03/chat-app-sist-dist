@@ -28,10 +28,10 @@ export default function LoginForm() {
 
       // Sucesso: simula usuário autenticado
       const user = {
-        id: "0", 
-        name: data.username,
-        avatar: "/assets/icon1.png", 
-        password: "", 
+        id: Number(data.id),
+        name: data.name, 
+        avatar: data.avatar, 
+        password: data.password, 
       };
 
       dispatch({ type: "LOGIN", payload: user });

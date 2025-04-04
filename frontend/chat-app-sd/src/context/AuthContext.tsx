@@ -3,11 +3,11 @@
 import { createContext, useEffect, useReducer } from "react";
 
 export type User = {
-  id: number;               // era string, agora número (consistente com backend)
+  id: number;               
   name: string;
-  email?: string;           // opcional, caso use no login
-  avatar?: string;          // opcional
-  password?: string;        // opcional (em produção, evite armazenar isso)
+  email?: string;           
+  avatar?: string;          
+  password?: string;        
 };
 
 type AuthState = {
@@ -47,7 +47,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         const parsedUser: User = JSON.parse(storedUser);
         dispatch({ type: 'LOGIN', payload: parsedUser });
       } catch (e) {
-        console.error("❌ Erro ao parsear usuário do localStorage:", e);
+        console.error(" Erro ao parsear usuário do localStorage:", e);
       }
     }
   }, []);

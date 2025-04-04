@@ -43,8 +43,8 @@ router.post('/login', (req, res) => {
         id: user.id,
         name: user.name,
         email: user.email,
-        avatar: user.avatar || '/assets/default-avatar.png' 
-     //   password: user.password 
+        avatar: user.avatar, 
+        password: user.password 
       });
       
   });

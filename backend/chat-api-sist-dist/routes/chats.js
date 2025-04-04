@@ -29,7 +29,20 @@ router.post('/chats', (req, res) => {
     }
   
     const newChatId = (chats.length + 1).toString();
+    
+    //se for uma conversa, o nome do chat é o nome do outro participante
+    let newChatName = '';
+    if (participants.length === 2) {
+      newChatName = participants[1].name === req.body.name ? participants[0].name : participants[1].name;  // Nome do outro participante
+    } else {
+      newChatName = req.body.name || 'Novo grupo';  // Nome padrão para grupos, ou fornecido
+    }
+
+    //criando o chat (grupo ou conversa)
     const newChat = new Chat(newChatId, participants, messages || []);
+    newChat.name = newChatName;
+
+    //adicionando o novo chat na lista
     chats.push(newChat);
   
     console.log('✅ Novo chat criado:', newChat);
@@ -63,7 +76,7 @@ router.put('/chats/:id', (req, res) => {
   }
 
   chat.name = newName;
-  console.log(`✏️ Chat ${chatId} renomeado para "${newName}"`);
+  console.log(` Chat ${chatId} renomeado para "${newName}"`);
   res.status(200).json({ message: 'Nome do grupo atualizado com sucesso' });
 });
 
