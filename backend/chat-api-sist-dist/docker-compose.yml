@@ -1,11 +1,25 @@
 version: "3.8"
 services:
-  api:
-    build: .
+  frontend:
+    build:
+      context: ./frontend/chat-app-sd  # Caminho para o frontend
     ports:
-      - "3000:3000"
+      - "3000:3000"  # Mapeando a porta 3000 do frontend
     volumes:
-      - .:/app
-      - /app/node_modules
+      - ./frontend/chat-app-sd/src:/app  # Sincronizando a pasta src com o container, onde o app está
     environment:
-      - NODE_ENV=production
+      - NODE_ENV=development
+    working_dir: /app  # Diretório de trabalho dentro do container
+    command: npm run dev  # Comando para rodar o Next.js em modo desenvolvimento
+
+  backend:
+    build:
+      context: ./backend/chat-api-sist-dist  # Caminho para o backend
+    ports:
+      - "3001:3001"  # Mapeando a porta 3001 do backend
+    volumes:
+      - ./backend/chat-api-sist-dist:/app  # Sincronizando os arquivos do backend com o container
+    environment:
+      - NODE_ENV=development
+    working_dir: /app  # Diretório de trabalho no container
+    command: npm run start  # Comando para rodar o backend

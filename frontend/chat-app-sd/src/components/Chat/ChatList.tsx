@@ -38,30 +38,26 @@ export default function ChatList() {
       dispatchChatsContext({ type: "SET_ALL_CHATS", payload: conversas });
 
     } catch (err) {
-      console.error("❌ Erro ao buscar chats:", err);
+      console.error(" Erro ao buscar chats:", err);
     }
   };
 
-  useEffect(() => {
-    fetchChats();
-  }, [authState.user]);
   
   useEffect(() => {
     fetchChats(); 
-  }, [grupos]);
+  }, [grupos, conversas]);
 
-  useEffect(() => {
-      fetchChats(); 
-  }, [conversas]);
 
   const handleSelectedChat = (chatId: string) => {
     dispatch({ type: 'SET_ACTIVE_CHAT', payload: chatId });
     setTimeout(() => setType('group'), 0);
+   // fetchChats();
   };
 
   const handleSelectedChatContext = (chatId: string) => {
     dispatchChatsContext({ type: 'SET_ACTIVE_CHAT', payload: chatId });
     setTimeout(() => setType('contact'), 0);
+    //fetchChats();
   };
 
   const handleDeleteChat = async (chatId: string) => {
@@ -74,8 +70,8 @@ export default function ChatList() {
   
       if (!res.ok) throw new Error(await res.text());
   
-      console.log("🗑️ Grupo excluído com sucesso");
-      fetchChats(); // Atualiza os dados
+      console.log(" Grupo excluído com sucesso");
+      //fetchChats(); // Atualiza os dados
     } catch (err) {
       console.error("Erro ao excluir grupo:", err);
     }
@@ -91,8 +87,8 @@ export default function ChatList() {
   
       if (!res.ok) throw new Error(await res.text());
   
-      console.log("🗑️ Conversa excluída com sucesso");
-      fetchChats(); // Atualiza
+      console.log("Conversa excluída com sucesso");
+     // fetchChats(); // Atualiza
     } catch (err) {
       console.error(" Erro ao excluir conversa:", err);
     }
@@ -113,12 +109,11 @@ export default function ChatList() {
       if (!res.ok) throw new Error(await res.text());
   
       console.log(" Nome do grupo alterado com sucesso");
-      fetchChats(); // Atualiza os dados após sucesso
+     // fetchChats(); // Atualiza os dados após sucesso
     } catch (err) {
       console.error("Erro ao editar nome do grupo:", err);
     }
   };
-  
   
 
   return (

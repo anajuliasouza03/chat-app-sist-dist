@@ -13,6 +13,7 @@ export default function ChatWindow() {
   const { type } = useActiveChatType();
 
   const [message, setMessage] = useState('');
+ 
 
   const activeChat =
     type === 'group'
@@ -36,12 +37,12 @@ export default function ChatWindow() {
       const res = await fetch(url);
 
       if (!res.ok) {
-        console.error("❌ Erro HTTP:", res.status, await res.text());
+        console.error(" Erro HTTP:", res.status, await res.text());
         return;
       }
 
       const data = await res.json();
-      console.log("📦 Mensagens recebidas da API:", data);
+      console.log(" Mensagens recebidas da API:", data);
 
       const formattedMessages = data.map((msg: any) => ({
         id: msg.id.toString(),
@@ -59,26 +60,13 @@ export default function ChatWindow() {
       } as const;
 
       type === 'group' ? dispatchGroup(action) : dispatchContact(action);
+   
+
     } catch (err) {
-      console.error("❌ Erro ao carregar mensagens:", err);
+      console.error(" Erro ao carregar mensagens:", err);
     }
   };
 
-  useEffect(() => {
-    fetchMessages();
-  }, [type, activeChat?.id]);
-
-  //useMemo
-  /*
-  const isMine = useMemo(() => {
-    if (activeChat) {
-      return activeChat.messages.map((msg) => {
-        // Verifica se a mensagem é do usuário logado
-        return msg.sender && msg.sender.trim().toLowerCase() === authState.user?.name.trim().toLowerCase();
-      });
-    }
-  }, [authState.user?.name, activeChat?.messages]);
-*/
   
   const handleSend = async () => {
     if (!message.trim() || !authState.user || !activeChat) return;
@@ -98,7 +86,7 @@ export default function ChatWindow() {
       });
 
       const result = await response.json();
-      console.log("📤 Mensagem enviada:", result);
+      console.log("Mensagem enviada:", result);
 
       const newMessage = {
         id: Date.now().toString(),
@@ -118,7 +106,7 @@ export default function ChatWindow() {
       type === 'group' ? dispatchGroup(action) : dispatchContact(action);
       setMessage('');
     } catch (err) {
-      console.error("❌ Erro ao enviar:", err);
+      console.error("Erro ao enviar:", err);
     }
   };
 
@@ -129,6 +117,7 @@ export default function ChatWindow() {
       </div>
     );
   }
+
 
 
   return (
@@ -146,8 +135,10 @@ export default function ChatWindow() {
       {activeChat.messages.map((msg) => {
 
        // Verifica se a mensagem é do usuário logado
-      const isMineMessage = msg.sender && msg.sender.trim().toLowerCase() === authState.user?.name.trim().toLowerCase();
-
+       const isMineMessage = msg.sender && msg.sender.trim().toLowerCase() === authState.user?.name.trim().toLowerCase();
+       console.log("authState.user?.name: ", authState.user?.name);
+       console.log("msg.sender: ", msg.sender);
+      
       return (
           <div key={msg.id} className={`flex ${isMineMessage ? 'justify-end' : 'justify-start'}`}>
             <div
@@ -158,8 +149,8 @@ export default function ChatWindow() {
               {!isMineMessage && (
                 <strong className="block text-xs text-[#2F0D5B] mb-1">{msg.sender}</strong>
               )}
-
-              <span>{msg.content}</span>
+              
+              <span>{`${authState.user?.name ?? msg.sender}: ${msg.content}`}</span>
             </div>
           </div>
         );
